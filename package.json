@@ -41,7 +41,7 @@
     ]
   },
   "devDependencies": {
-    "fp-ts": "^2.11.4",
+    "fp-ts": "^2.11.5",
     "immutable": "^4.0.0-rc.15"
   }
 }
