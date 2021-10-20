@@ -42,7 +42,7 @@ export function unify(s: Syn, t: Syn): Option<Sub> {
     // substitute ?s -> ?t
     return pipe(
       unify(s.sig, t.sig),
-      map(sub => Sub().set(s.hix, {case: "hol", hix: t.hix, sig: substitute(sub, t.sig), meta: dummyMeta}))
+      map(sub => sub.set(s.hix, {case: "hol", hix: t.hix, sig: substitute(sub, t.sig), meta: dummyMeta}))
     )
   } else {
     if (s.case === "hol") {
