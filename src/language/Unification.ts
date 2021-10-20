@@ -1,6 +1,6 @@
 import { Map } from "immutable";
 import { Hix, Syn } from "./Syntax";
-import { Option, chain, bind, bindTo, map, some, none } from "fp-ts/Option";
+import { Option, chain, map, some, none } from "fp-ts/Option";
 import { pipe } from 'fp-ts/function'
 
 type Sub = Map<Hix, Syn>;
@@ -31,14 +31,14 @@ export function unify(s: Syn, t: Syn): Option<Sub> {
   } else
   if (s.case === "pie" && t.case === s.case) {
     return pipe(
-      unify(s.dom, t.dom), bindTo('sub1'),
-      chain(({ sub1 }) => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.cod), substitute(sub1, t.cod)))),
+      unify(s.dom, t.dom),
+      chain(sub1 => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.cod), substitute(sub1, t.cod)))),
     );
   } else
   if (s.case === "lam" && t.case === s.case) {
     return pipe(
-      unify(s.dom, t.dom), bindTo('sub1'),
-      chain(({ sub1 }) => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.bod), substitute(sub1, t.bod))))
+      unify(s.dom, t.dom),
+      chain(sub1 => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.bod), substitute(sub1, t.bod))))
     );
   } else
   if (s.case === "neu" && t.case === s.case && s.args.size === t.args.size) {
