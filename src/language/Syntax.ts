@@ -8,7 +8,7 @@ export type Syn
   | {readonly case: "lam", var: Var, dom: Syn, bod: Syn}
   | {readonly case: "neu", var: Var, args: List<Syn>}
   | {readonly case: "let", var: Var, sig: Syn, imp: Syn, bod: Syn}
-  | {readonly case: "hol", sig: Syn}
+  | {readonly case: "hol", hix: Hix, sig: Syn}
 
 // normalized syntactic domain (does not preserve metadata)
 export type Nrm
@@ -16,8 +16,9 @@ export type Nrm
   | {readonly case: "pie", var: Var, dom: Nrm, cod: Nrm}
   | {readonly case: "lam", var: Var, dom: Nrm, bod: Nrm}
   | {readonly case: "neu", var: Var, args: List<Nrm>}
-  | {readonly case: "hol", sig: Nrm}
+  | {readonly case: "hol", hix: Hix, sig: Nrm}
 
 export type Var = {id: Id, dbl: Dbl}
 export type Id = {value: string}
+export type Hix = {ix: number};
 export type Dbl = number

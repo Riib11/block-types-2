@@ -1,6 +1,6 @@
 import { List, Record } from "immutable";
 import { Code } from "../language/Code";
-import { MetaTran, Tran } from "./Transition";
+import { MetaTransition, Transition } from "./Transition";
 
 export type StateParams = {
   c: Code;
@@ -24,14 +24,14 @@ export const defaultStateParams: StateParams = {
 
 export class State extends Record(defaultStateParams) {}
 
-export function update(state: State, delta: MetaTran): State {
-  return expandMetaTran(state, delta).reduce((state, tran) => updateSingle(state, tran), state);
+export function update(state: State, delta: MetaTransition): State {
+  return expandMetaTransition(state, delta).reduce((state, tran) => updateSingle(state, tran), state);
 }
 
-export function updateSingle(state: State, delta: Tran): State {
+export function updateSingle(state: State, delta: Transition): State {
   throw new Error("unimplemented");
 }
 
-export function expandMetaTran(state: State, delta: MetaTran): List<Tran> {
+export function expandMetaTransition(state: State, delta: MetaTransition): List<Transition> {
   throw new Error("unimplemented");
 }

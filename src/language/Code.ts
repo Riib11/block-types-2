@@ -1,6 +1,6 @@
 import { Lvl } from "./Level";
 import { Meta } from "./Meta";
-import { Var } from "./Syntax";
+import { Syn, Var } from "./Syntax";
 
 // code domain
 export type Code
@@ -10,3 +10,5 @@ export type Code
   | {readonly case: "neu", var: Var, args: Code[], meta: Meta}
   | {readonly case: "let", var: Var, sig: Code, imp: Code, bod: Code, meta: Meta}
   | {readonly case: "hol", sig: Code, meta: Meta}
+
+export const toSyn = (c: Code): Syn => c as Syn;

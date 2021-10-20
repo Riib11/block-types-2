@@ -9,8 +9,8 @@ export default class App extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = new State({t: {case: "hol", sig: {case: "hol", sig: {case: "uni", lvl: "omega"}}}});
-    this.renderer = new Renderer(this.state);
+    this.state = new State();
+    this.renderer = new Renderer(this);
   }
 
   render(): JSX.Element {

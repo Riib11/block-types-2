@@ -1,9 +1,9 @@
+import { Mutation } from "../language/Mutation";
+
 // TODO
-export type Tran
-  // syntax
-  = {readonly case: "select syntax"}
-  | {readonly case: "fill hole"}
-  | {readonly case: "dig hole"}
+export type Transition
+  // mutation
+  = {readonly case: "mutate", mut: Mutation}
   // buffers
   | {readonly case: "create buffer"}
   | {readonly case: "delete buffer"}
@@ -16,10 +16,10 @@ export type Tran
 ;
 
 // TODO
-// MetaTrans are contextually expanded into a sequence of base
+// MetaTransitions are contextually expanded into a sequence of base
 // transitions.
-export type MetaTran
-  = {readonly case: "base", delta: Tran}
+export type MetaTransition
+  = {readonly case: "base", delta: Transition}
   | {readonly case: "move syntax selection", dir: Direction}
   | {readonly case: "move transition selection", dir: DirectionVertical}
 ;

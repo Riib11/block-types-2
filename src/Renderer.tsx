@@ -1,11 +1,12 @@
-import { Id, Syn } from "./language/Syntax";
-import { State } from "./state/State";
+import App from "./App";
+import { Code } from "./language/Code";
+import { Id, Nrm, Syn } from "./language/Syntax";
 
 export default class Renderer {
-  state: State;
+  app: App;
 
-  constructor(state: State) {
-    this.state = state;
+  constructor(app: App) {
+    this.app = app;
   }
 
   renderState(): JSX.Element {
@@ -93,6 +94,14 @@ export default class Renderer {
       </div>
     );
   }
+
+  renderCode(c: Code): JSX.Element {
+    // let app = this;
+    // switch (c.case) {
+    //   case "uni"
+    // }
+    throw new Error("unimplemented");
+  }
   
 
   renderSyn(t: Syn, i: number = 0): JSX.Element {
@@ -100,7 +109,7 @@ export default class Renderer {
       case "uni": return (<span className="uni">U</span>);
       case "pie": return (<span className="pie">(Π ({this.renderId(t.var.id)} : {this.renderSyn(t.dom, i)}) . {this.renderSyn(t.dom, i)})</span>);
       case "lam": return (<span className="lam">(λ ({this.renderId(t.var.id)} : {this.renderSyn(t.dom, i)}) . {this.renderSyn(t.bod, i)})</span>);
-      case "neu": return (<span className="neu">({this.renderId(t.var.id)} {t.args.map(arg => this.renderSyn(arg)).join()})</span>);
+      case "neu": return (<span className="neu">({this.renderId(t.var.id)} {t.args.map(arg => this.renderSyn(arg, i)).join()})</span>);
       case "let": return (<span className="let">{indent(i)}(let {this.renderId(t.var.id)} : {this.renderSyn(t.sig, i)} = {this.renderSyn(t.imp, i + 1)} in<br/>{this.renderSyn(t.bod, i)})</span>);
       case "hol": return (<span className="hol">({this.renderHole()} : {this.renderSyn(t.sig, i)})</span>);
     }
@@ -118,8 +127,14 @@ export default class Renderer {
     )
   }
 
-  renderSynNrm(): JSX.Element {
-    throw new Error("unimplemented");
+  renderNrm(t: Nrm, i: number = 0): JSX.Element {
+    switch (t.case) {
+      case "uni": return (<span className="uni">U</span>);
+      case "pie": return (<span className="pie">(Π ({this.renderId(t.var.id)} : {this.renderNrm(t.dom, i)}) . {this.renderNrm(t.dom, i)})</span>);
+      case "lam": return (<span className="lam">(λ ({this.renderId(t.var.id)} : {this.renderNrm(t.dom, i)}) . {this.renderNrm(t.bod, i)})</span>);
+      case "neu": return (<span className="neu">({this.renderId(t.var.id)} {t.args.map(arg => this.renderNrm(arg, i)).join()})</span>);
+      case "hol": return (<span className="hol">({this.renderHole()} : {this.renderNrm(t.sig, i)})</span>);
+    }
   }
 }
 
