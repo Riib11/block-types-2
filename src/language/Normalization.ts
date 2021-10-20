@@ -3,7 +3,7 @@ import { predLvl } from "./Level";
 import { Sem } from "./Semantics";
 import { Dbl, Nrm, Syn } from "./Syntax";
 
-export type Sub = List<Sem>;
+type Sub = List<Sem>;
 
 /*
 ## Normalization

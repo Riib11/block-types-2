@@ -1,11 +1,11 @@
+import { List } from "immutable"
+import { Transition } from "../state/Transition"
+import { Code } from "./Code"
 import { Fix } from "./Fix"
 
 // metadata
 export type Meta = {
-  fix: Fix
+  fix: Fix,
+  parent: Code | "top",
+  transitions: () => List<Transition>
 }
-
-// empty metadata
-export const emptyMeta = (): Meta => ({
-  fix: "free"
-})

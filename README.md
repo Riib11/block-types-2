@@ -21,3 +21,10 @@ mutation
   - a _replacement_ is a mapping of a particular sub-term to a term, not
     necessarily of a compatible type
     - conditions: fixity of the original sub-term
+
+render
+
+- each code has a list of Transitions that are available while that code is
+  selected
+- when a code is selected (by clicking / navigation), then it's associated list
+  of possible transitions are used to generate the palette options
