@@ -1,5 +1,7 @@
 import { Map } from "immutable";
 import { Hix, Syn } from "./Syntax";
+import { Option, chain, bind, bindTo, map, some, none } from "fp-ts/Option";
+import { pipe } from 'fp-ts/function'
 
 type Sub = Map<Hix, Syn>;
 
@@ -19,52 +21,50 @@ export function substitute(sub: Sub, t: Syn): Syn {
 }
 
 // unify s and t if possible, otherwise undefined
-// the unification of s and t is a substitution sigma such that sigma s = sigma t
-export function unify(s: Syn, t: Syn): Sub | undefined {
+// the unification of s and t is a substitution sub such that sub s = sub t
+export function unify(s: Syn, t: Syn): Option<Sub> {
   if (s.case === "uni" && t.case === s.case) {
-    if (s.lvl === t.lvl) return Map();
+    if (s.lvl === t.lvl) 
+      return some(Map());
+    else
+      return none;
   } else
   if (s.case === "pie" && t.case === s.case) {
-    let sigma1 = unify(s.dom, t.dom);
-    let sigma2 = unify(s.cod, t.cod);
-    return (sigma1 !== undefined && sigma2 !== undefined) ? sigma1.concat(sigma2) : undefined;
+    return pipe(
+      unify(s.dom, t.dom), bindTo('sub1'),
+      chain(({ sub1 }) => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.cod), substitute(sub1, t.cod)))),
+    );
   } else
   if (s.case === "lam" && t.case === s.case) {
-    let sigma1 = unify(s.dom, t.dom);
-    let sigma2 = unify(s.bod, t.bod);
-    return (sigma1 !== undefined && sigma2 !== undefined) ? sigma1.concat(sigma2) : undefined;
+    return pipe(
+      unify(s.dom, t.dom), bindTo('sub1'),
+      chain(({ sub1 }) => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.bod), substitute(sub1, t.bod))))
+    );
   } else
   if (s.case === "neu" && t.case === s.case && s.args.size === t.args.size) {
-    let sigma: Sub = Map();
-    for (let i = 0; i < s.args.size; i++) {
-      let sigma_i = unify(s.args.get(i) as Syn, t.args.get(i) as Syn);
-      if (sigma_i !== undefined)
-        sigma = sigma.concat(sigma_i);
-      else
-        return undefined;
-    }
-    return sigma;
+    return s.args.zip(t.args).reduce<Option<Sub>>((m_sub, [si, ti]) => chain<Sub, Sub> (sub => unify(substitute(sub, si), substitute(sub, ti)))(m_sub), none);
   } else
   if (s.case === "let" && t.case === s.case) {
-    let sigma1 = unify(s.sig, t.sig);
-    let sigma2 = unify(s.imp, t.imp);
-    let sigma3 = unify(s.bod, t.bod);
-    return (sigma1 !== undefined && sigma2 !== undefined && sigma3 !== undefined) ? sigma1.concat(sigma2.concat(sigma3)) : undefined;
+    return pipe(
+      unify(s.sig, t.sig),
+      chain(sub1 => map<Sub, Sub>(sub2 => sub1.concat(sub2))(unify(substitute(sub1, s.imp), substitute(sub1, t.imp)))),
+      chain(sub2 => map<Sub, Sub>(sub3 => sub2.concat(sub3))(unify(substitute(sub2, s.bod), substitute(sub2, t.bod))))
+    );
   } else
   if (s.case === "hol" && t.case === s.case) {
     // the holes must be the same
     // substitute ?s -> ?t
-    return Map<Hix, Syn>().set(s.hix, {case: "hol", hix: t.hix, sig: t.sig});
+    return some(Map<Hix, Syn>().set(s.hix, {case: "hol", hix: t.hix, sig: t.sig}));
   } else {
     if (s.case === "hol") {
       // substitute ?s -> t
-      return Map<Hix, Syn>().set(s.hix, t);
+      return some(Map<Hix, Syn>().set(s.hix, t));
     } else
     if (t.case === "hol") {
       // substitute ?t -> s
-      return Map<Hix, Syn>().set(t.hix, s);
+      return some(Map<Hix, Syn>().set(t.hix, s));
     } else {
-      return undefined;
+      return none;
     }
   }
 }
