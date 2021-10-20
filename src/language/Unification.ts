@@ -40,7 +40,10 @@ export function unify(s: Syn, t: Syn): Option<Sub> {
   if (s.case === "hol" && t.case === s.case) {
     // the holes must be the same
     // substitute ?s -> ?t
-    return some(Map<Hix, Syn>().set(s.hix, {case: "hol", hix: t.hix, sig: t.sig, meta: dummyMeta}));
+    return pipe(
+      unify(s.sig, t.sig),
+      map(sub => Sub().set(s.hix, {case: "hol", hix: t.hix, sig: substitute(sub, t.sig), meta: dummyMeta}))
+    )
   } else {
     if (s.case === "hol") {
       // substitute ?s -> t

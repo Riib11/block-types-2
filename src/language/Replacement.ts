@@ -2,7 +2,8 @@ import { Syn } from "./Syntax";
 
 // replace r with s in t
 export function replace(r: Syn, s: Syn, t: Syn): Syn {
-  if (t === r) return s;
+  // compare by reference
+  if (r === t) return s;
   else {
     switch (t.case) {
       case "uni": return t;
