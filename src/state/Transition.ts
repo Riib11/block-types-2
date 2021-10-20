@@ -1,29 +1,15 @@
+import { Hix } from "../language/Hix";
 import { Mutation } from "../language/Mutation";
+import { Id } from "../language/Syntax";
 
-// TODO
 export type Transition
   // mutation
   = {readonly case: "mutate", mut: Mutation}
   // buffers
-  | {readonly case: "create buffer"}
-  | {readonly case: "delete buffer"}
-  | {readonly case: "submit buffer"}
-  // transitions
-  | {readonly case: "select transition"}
+  | {readonly case: "create buffer", buffer: Buffer}
+  | {readonly case: "delete buffer", buffer: Buffer}
+  | {readonly case: "submit buffer", buffer: Buffer, hix: Hix}
   // meta
-  | {readonly case: "rename id"}
+  | {readonly case: "rename id", id: Id, value: string}
   | {readonly case: "undo"}
 ;
-
-// TODO
-// MetaTransitions are contextually expanded into a sequence of base
-// transitions.
-export type MetaTransition
-  = {readonly case: "base", delta: Transition}
-  | {readonly case: "move syntax selection", dir: Direction}
-  | {readonly case: "move transition selection", dir: DirectionVertical}
-;
-
-export type Direction = DirectionVertical | DirectionVertical;
-export type DirectionVertical = "up" | "down";
-export type DirectionHorizontal = "left" | "right";

@@ -1,5 +1,6 @@
 import { List } from "immutable";
 import { predLvl } from "./Level";
+import { dummyMeta } from "./Meta";
 import { Sem } from "./Semantics";
 import { Dbl, Nrm, Syn } from "./Syntax";
 
@@ -57,7 +58,8 @@ export function reflect(T: Sem, t: Syn, dbl: Dbl = 0): Sem {
       switch (t.case) {
         case "neu": return {
           case: "arr",
-          arr: (a: Sem) => reflect(T.cod(a), {case: "neu", var: t.var, args: t.args.push(reify(T.dom, a, dbl))}, dbl)
+          // TODO: is casting to Syn ok here?
+          arr: (a: Sem) => reflect(T.cod(a), {case: "neu", var: t.var, args: t.args.push(reify(T.dom, a, dbl) as Syn), meta: t.meta}, dbl)
         }
         default: throw errorNormalization();
       }
@@ -80,8 +82,8 @@ export function reify(T: Sem, t: Sem, dbl: Dbl = 0): Nrm {
         case "spi": return {
           case: "pie",
           var: t.var,
-          dom: reify({case: "uni", lvl: predLvl(T.lvl)}, t.dom, dbl),
-          cod: reify({case: "uni", lvl: predLvl(T.lvl)}, t.cod(reflect(t.dom, {case: "neu", var: t.var, args: List()}, dbl + 1)))
+          dom: reify({case: "uni", lvl: predLvl(T.lvl), meta: dummyMeta}, t.dom, dbl),
+          cod: reify({case: "uni", lvl: predLvl(T.lvl), meta: dummyMeta}, t.cod(reflect(t.dom, {case: "neu", var: t.var, args: List(), meta: dummyMeta}, dbl + 1)))
         }
         case "neu": return t as Nrm;
         case "hol": return t as Nrm;
@@ -93,8 +95,8 @@ export function reify(T: Sem, t: Sem, dbl: Dbl = 0): Nrm {
         case "arr": return {
           case: "lam",
           var: T.var,
-          dom: reify({case: "uni", lvl: "omega"}, T.cod(reflect(T.dom, {case: "neu", var: T.var, args: List()}, dbl + 1)), dbl),
-          bod: reify(T.cod(reflect(T.dom, {case: "neu", var: T.var, args: List()}, dbl + 1)), t.arr(reflect(T.dom, {case: "neu", var: T.var, args: List()}, dbl + 1)))
+          dom: reify({case: "uni", lvl: "omega", meta: dummyMeta}, T.cod(reflect(T.dom, {case: "neu", var: T.var, args: List(), meta: dummyMeta}, dbl + 1)), dbl),
+          bod: reify(T.cod(reflect(T.dom, {case: "neu", var: T.var, args: List(), meta: dummyMeta}, dbl + 1)), t.arr(reflect(T.dom, {case: "neu", var: T.var, args: List(), meta: dummyMeta}, dbl + 1)))
         };
         default: throw errorNormalization();
       }
