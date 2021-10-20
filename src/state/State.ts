@@ -1,27 +1,37 @@
 import { List, Record } from "immutable";
-import { Syn } from "../language/Syntax";
-import { Metatransition, Transition } from "./Transition";
+import { Code } from "../language/Code";
+import { MetaTran, Tran } from "./Transition";
 
 export type StateParams = {
-  t: Syn;
+  c: Code;
 }
 
-const defaultStateParams: StateParams = {
-  t: {case: "hol", goal: {case: "uni", level: "omega"}}
-}
-
-export class State extends Record(defaultStateParams) {
-  t!: Syn;
-
-  constructor(params?: StateParams) {
-    params ? super(params) : super();
+export const defaultStateParams: StateParams = {
+  c: {
+    case: "hol",
+    sig: {
+      case: "hol",
+      sig: {
+        case: "uni",
+        lvl: "omega",
+        meta: {fix: "term"}
+      },
+      meta: {fix: "type"}
+    },
+    meta: {fix: "free"}
   }
 }
 
-export function update(state: State, delta: Metatransition): State {
+export class State extends Record(defaultStateParams) {}
+
+export function update(state: State, delta: MetaTran): State {
+  return expandMetaTran(state, delta).reduce((state, tran) => updateSingle(state, tran), state);
+}
+
+export function updateSingle(state: State, delta: Tran): State {
   throw new Error("unimplemented");
 }
 
-export function expandMetatransition(state: State, delta: Metatransition): List<Transition> {
+export function expandMetaTran(state: State, delta: MetaTran): List<Tran> {
   throw new Error("unimplemented");
 }

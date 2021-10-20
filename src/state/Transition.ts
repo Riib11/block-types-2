@@ -1,5 +1,5 @@
 // TODO
-export type Transition
+export type Tran
   // syntax
   = {readonly case: "select syntax"}
   | {readonly case: "fill hole"}
@@ -16,10 +16,10 @@ export type Transition
 ;
 
 // TODO
-// Metatransitions are contextually expanded into a sequence of base
+// MetaTrans are contextually expanded into a sequence of base
 // transitions.
-export type Metatransition
-  = {readonly case: "base", delta: Transition}
+export type MetaTran
+  = {readonly case: "base", delta: Tran}
   | {readonly case: "move syntax selection", dir: Direction}
   | {readonly case: "move transition selection", dir: DirectionVertical}
 ;

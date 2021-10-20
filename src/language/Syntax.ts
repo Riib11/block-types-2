@@ -1,19 +1,23 @@
-import { List } from "immutable"
+import { List } from "immutable";
+import { Lvl } from "./Level";
 
-// TODO
+// syntactic domain
 export type Syn
-  = {readonly case: "uni", level: Level}
-  | {readonly case: "hol", goal: SynNrm}
-  | {readonly case: "neu", id: Id, args: List<Syn>}
-;
+  = {readonly case: "uni", lvl: Lvl}
+  | {readonly case: "pie", var: Var, dom: Syn, cod: Syn}
+  | {readonly case: "lam", var: Var, dom: Syn, bod: Syn}
+  | {readonly case: "neu", var: Var, args: List<Syn>}
+  | {readonly case: "let", var: Var, sig: Syn, imp: Syn, bod: Syn}
+  | {readonly case: "hol", sig: Syn}
 
-// TODO
-export type SynNrm
-  = {readonly case: "uni", level: Level}
-  | {readonly case: "hol", goal: SynNrm}
-  | {readonly case: "neu", id: Id, args: List<Syn>}
-;
+// normalized syntactic domain (does not preserve metadata)
+export type Nrm
+  = {readonly case: "uni", lvl: Lvl}
+  | {readonly case: "pie", var: Var, dom: Nrm, cod: Nrm}
+  | {readonly case: "lam", var: Var, dom: Nrm, bod: Nrm}
+  | {readonly case: "neu", var: Var, args: List<Nrm>}
+  | {readonly case: "hol", sig: Nrm}
 
-export type Id = {label: string};
-
-export type Level = number | "omega";
+export type Var = {id: Id, dbl: Dbl}
+export type Id = {value: string}
+export type Dbl = number
